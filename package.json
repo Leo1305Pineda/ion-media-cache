@@ -1,6 +1,10 @@
 {
   "name": "ion-media-cache",
   "version": "0.0.13",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Leo1305Pineda/ion-madia-cache.git"
+  },
   "author": {
     "name": "Leonardo Pineda",
     "email": "leo1305pineda@gmail.com"
