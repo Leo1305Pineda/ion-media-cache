@@ -1,0 +1,41 @@
+{
+  "name": "ion-media-cache",
+  "version": "0.0.12",
+  "author": {
+    "name": "Leonardo Pineda",
+    "email": "leo1305pineda@gmail.com"
+  },
+  "keywords": [
+    "ionic",
+    "file",
+    "media",
+    "cache",
+    "image",
+    "file",
+    "PWA",
+    "filesystem",
+    "fs-web"
+  ],
+  "scripts": {
+    "ng": "ng",
+    "serve": "ng serve -o",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "start": "ionic build --prod --build-optimizer --vendor-chunk=true && node server.js",
+    "copy:readme": "cp README.md ./dist/ion-media-cache/README.md",
+    "copy:license": "cp LICENSE ./dist/ion-media-cache/LICENSE",
+    "build:lib": "ng build ion-media-cache --prod",
+    "publish:lib": "npm run build:lib && cd dist/ion-media-cache && npm publish"
+  },
+  "private": false,
+  "peerDependencies": {
+    "@angular/common": "^10.0.14",
+    "@angular/core": "^10.0.14"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0",
+    "fs-web": "^1.0.1"
+  }
+}

@@ -1,0 +1,144 @@
+# Ion Media Cache
+
+Directive cache multimedia.
+
+## Usage notice
+With this directive you can download file to the device using [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and render the source in the component. If your application is PWA, it use FileSystem to save the blob.
+ 
+
+## Supported Platforms.
+    * Android
+    * Browser
+    * Ios
+
+## Installation
+
+`npm i ion-media-cache@latest`.
+
+## require installation ionic native
+
+[File](https://ionicframework.com/docs/native/file)
+
+## Quickstart
+
+Import ion-media-cache in you module page.
+
+```typescript
+// Import the module
+import { IonMediaCacheModule } from 'ion-media-cache';
+...
+@NgModule({
+    (...)
+    imports: [
+        IonMediaCacheModule
+    ],
+    (...)
+})
+export class PageModule {}
+```
+
+## Usage
+
+### image
+```html
+<img [url]="image" [customCache]="{fallbackUrl: '/assets/img/default.png'}">
+
+<ion-img [url]="image" [customCache]="{fallbackUrl: '/assets/img/default.png'}"></ion-img>
+```
+### audio
+```html
+<audio controls name="media">
+  <source [url]="audio" customCache>
+</audio>
+```
+
+## Events
+
+```html
+<ion-img
+    [url]="image"
+    [customCache]="customCache"
+    (onExpireCache)="onExpireCache($event)"
+    (ionImgDidLoad)="ionImgDidLoad($event)"
+    (ionError)="ionError($event)"
+></ion-img>
+```
+
+```typescript
+onExpireCache(event) {
+    console.log(event);
+}
+ionImgDidLoad(event) {
+    console.log(event);
+}
+ionError(event) {
+    console.log(event);
+}
+```
+
+## Optional custom cache
+
+```typescript
+customCache = {
+    debugMode: false,                       // boolean default = false;
+    enabled: true,                          // booleandefault = true;
+    corsFromHeroku: false                    // fix https://stackoverflow.com/a/21136980/7638125
+    fallbackUrl: '',                        // string usage uri fail 'assetes/img/default.png'.
+    concurrency: 5,                         // number default = 5, only on android, ios.
+    maxCacheSize: -1,                       // number default -1, without limit.
+    maxCacheAge: -1,                        // number default -1, without limit.
+    httpHeaders: ,                          // any default = {}.
+    fileNameCachedWithExtension: true,      // boolean default = true, save file with extension.
+    fallbackFileNameCachedExtension: '.jpg',// string default '.jpg', extension to save.
+    cacheDirectoryType: 'external',         // 'cache' | 'data' | 'external' default = 'external'.
+    imageReturnType: 'uri',                 // 'base64' | 'uri' default = 'uri'.
+    cacheDirectoryName: 'ion-media-cache',  // string default = 'ion-media-cache'.
+    cache_expire: undefined,                // any default undefined, usage { time: new Date().getTime() + (1000 * [unit_second]) }.
+    cache = true,                           // boolean defaul = true, activeted cache.
+    render: 'src',                          // string default, render to property src.
+    spinner: `
+    <ion-spinner name="crescent">
+    </ion-spinner>`,                        // any usage innertHtml.
+    fallbackReload: `
+    <ion-icon name="cloud-offline" style="font-size: 2.7em;"></ion-icon>
+    `,                                      // any;usage innertHtml.
+
+}
+```
+
+## IonMediaCache
+
+```javascript
+// Print current cache loader in the DOM
+// Use console inspect in the browser
+IonMediaCache
+```
+
+## Testing fetch 
+
+```js
+fetch('http://cors-anywhere.herokuapp.com/https://lorempixel.com/640/480/?60789', {
+   headers: {},
+}).then((response) => {
+   return response.blob();
+}).then((blob) => {
+   console.log(blob);
+}).catch((e) => console.log(e));
+```
+
+
+[Cors Erros](https://ionicframework.com/docs/troubleshooting/cors)
+[Configuring Cors For Laravel Public Storage](https://zaengle.com/blog/configuring-cors-for-laravel-public-storage)
+
+[fix stackoverflow](https://stackoverflow.com/a/21136980/7638125)
+
+```js
+customCache = {
+    corsFromHeroku: true // this is default false, limited use fix https://stackoverflow.com/a/21136980/7638125
+}
+```
+### CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
+
+If you expect lots of traffic, please host your own instance of CORS Anywhere, and make sure that the CORS Anywhere server only whitelists your site to prevent others from using your instance of CORS Anywhere as an open proxy.
+
+[Demo Server CORS Anywhere](https://github.com/Rob--W/cors-anywhere#demo-server)
