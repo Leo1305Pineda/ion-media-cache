@@ -126,6 +126,9 @@ export class IonMediaCacheDirective implements OnInit {
   }
 
   renderSpinner() {
+    if (typeof this.config.spinner === 'boolean' && !this.config.spinner) {
+      return;
+    }
     if (!this.spinnerDiv) {
       this.spinnerDiv = this.renderer.createElement('div');
       this.spinnerDiv.className = 'spinner-div';
@@ -138,6 +141,9 @@ export class IonMediaCacheDirective implements OnInit {
   }
 
   renderFallbackDiv() {
+    if (typeof this.config.fallbackReload === 'boolean' && !this.config.fallbackReload) {
+      return;
+    }
     if (!this.fallbackDiv) {
       this.fallbackDiv = this.renderer.createElement('div');
       this.fallbackDiv.className = 'fallback-div';
@@ -297,7 +303,9 @@ export class IonMediaCacheDirective implements OnInit {
     }
     this.config.isFallback = false;
     const src = imageUrl || this.config.fallbackUrl;
-    if (this.tag.nativeElement[this.config.render] != src) {
+    if (this.config.render !== 'src') {
+      this.renderer.setStyle(this.tag.nativeElement, this.config.render, `url(${src})`);
+    } else if (this.tag.nativeElement[this.config.render] != src) {
       this.tag.nativeElement[this.config.render] = src;
     }
     if (this.tag.nativeElement.nodeName === 'ION-IMG') {

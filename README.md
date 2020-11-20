@@ -41,10 +41,19 @@ export class PageModule {}
 
 ### image
 ```html
-<img [url]="image" [customCache]="{fallbackUrl: '/assets/img/default.png'}">
+<img [url]="image" [customCache]="{fallbackUrl: '/assets/img/default.png'}" alt="ion-media-cache" />
 
 <ion-img [url]="image" [customCache]="{fallbackUrl: '/assets/img/default.png'}"></ion-img>
 ```
+
+### custom div background
+```html
+<div
+    [url]="image"
+    [customCache]="{fallbackUrl: '/assets/img/default.png', render: 'background', spinner: false, fallbackReload: false}"
+    style="background-repeat: no-repeat;background-position: center;background-size: cover;width: 100%;height: 100%;"></div>
+```
+
 ### audio
 ```html
 <audio controls name="media">
@@ -56,9 +65,10 @@ export class PageModule {}
 
 ```html
 <ion-img
+    #elRef
     [url]="image"
-    [customCache]="customCache"
-    (onExpireCache)="onExpireCache($event)"
+    [customCache]="{ fallbackUrl: '/assets/img/bienvenida.png', cache_expire: {time: n.component?.expire_subimage, data: data } }"
+    (onExpireCache)="onExpireCache($event, elRef)"
     (ionImgDidLoad)="ionImgDidLoad($event)"
     (ionError)="ionError($event)"
 ></ion-img>
@@ -67,6 +77,7 @@ export class PageModule {}
 ```typescript
 onExpireCache(event) {
     console.log(event);
+    event.el.clearImageCache(event.data.url);
 }
 ionImgDidLoad(event) {
     console.log(event);
@@ -98,10 +109,10 @@ customCache = {
     render: 'src',                          // string default, render to property src.
     spinner: `
     <ion-spinner name="crescent">
-    </ion-spinner>`,                        // any usage innertHtml.
+    </ion-spinner>`,                        // any usage innertHtml. or false to disabled spinner
     fallbackReload: `
     <ion-icon name="cloud-offline" style="font-size: 2.7em;"></ion-icon>
-    `,                                      // any;usage innertHtml.
+    `,                                      // any;usage innertHtml. or false to disable fallbackReload
 
 }
 ```
@@ -113,6 +124,13 @@ customCache = {
 // Use console inspect in the browser
 IonMediaCache
 ```
+
+## Methods
+
+```javascript
+    clearImageCache(url)
+```
+
 
 ## Testing fetch 
 
