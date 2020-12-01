@@ -2,7 +2,13 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "dist/ion-media-cache",
   "lib": {
-    "entryFile": "src/public-api.ts"
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "fs-web": "fs-web",
+      "@ionic-native/ionic-webview/ngx": "@ionic-native/ionic-webview/ngx",
+      "@ionic/angular": "@ionic/angular",
+      "@ionic-native/file/ngx": "@ionic-native/file/ngx"
+    }
   },
   "whitelistedNonPeerDependencies" : ["."]
 }

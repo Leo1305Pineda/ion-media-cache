@@ -125,13 +125,6 @@ customCache = {
 IonMediaCache
 ```
 
-## Methods
-
-```javascript
-    clearImageCache(url)
-```
-
-
 ## Testing fetch 
 
 ```js

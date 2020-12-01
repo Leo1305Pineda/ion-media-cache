@@ -30,7 +30,6 @@ const EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.tiff', '.mp4', '.
   // tslint:disable-next-line:directive-selector
   selector: '[customCache]',
   host: {
-    '(onExpireCache)': 'clearImageCache()',
     '(ionError)': 'setImageFallback()'
   }
 })
@@ -136,7 +135,9 @@ export class IonMediaCacheDirective implements OnInit {
       this.renderer.setAttribute(this.spinnerDiv, 'style', this.config.spinnerStyle);
       this.tag.nativeElement.parentElement.appendChild(this.spinnerDiv);
     } else {
-      this.spinnerDiv.style.display = 'flex';
+      if (this.spinnerDiv) {
+        this.spinnerDiv.style.display = 'flex';
+      }
     }
   }
 
@@ -326,10 +327,12 @@ export class IonMediaCacheDirective implements OnInit {
   }
 
   stopSpinner(fallback = false) {
-    this.spinnerDiv.style.display = 'none';
-    this.ionImgDidLoad.emit(true);
-    if (fallback) {
-      this.fallbackDiv.style.display = 'flex';
+    if (this.spinnerDiv) {
+      this.spinnerDiv.style.display = 'none';
+      this.ionImgDidLoad.emit(true);
+      if (fallback) {
+        this.fallbackDiv.style.display = 'flex';
+      }
     }
   }
 
@@ -660,7 +663,7 @@ export class IonMediaCacheDirective implements OnInit {
           return this.normalizeUrl(tempFileEntry);
         }
       } else {
-        let currentBlob: CurrentBlob = (window as any).IonMediaCache[this.dirPath + '/' + fileName];
+        let currentBlob: CurrentBlob = (window as any).IonMediaCache[url];
         if (!currentBlob) {
           currentBlob = new CurrentBlob();
         }
@@ -669,9 +672,9 @@ export class IonMediaCacheDirective implements OnInit {
             if (blob.type === 'text/html' || blob.type === 'application/octet-stream') {
               await fs.removeFile(this.dirPath + '/' + fileName);
             } else {
-              if (currentBlob.url !== url || currentBlob.blob.size !== blob.size) {
-                (window as any).IonMediaCache[this.dirPath + '/' + fileName] = new CurrentBlob({ url, blob, objectUrl: window.URL.createObjectURL(blob) });
-                currentBlob = (window as any).IonMediaCache[this.dirPath + '/' + fileName];
+              if (currentBlob.url != url) {
+                (window as any).IonMediaCache[url] = new CurrentBlob({ url, blob, objectUrl: window.URL.createObjectURL(blob), path: this.dirPath + '/' + fileName });
+                currentBlob = (window as any).IonMediaCache[url];
               }
               return currentBlob.objectUrl;
             }
@@ -840,7 +843,9 @@ export class IonMediaCacheDirective implements OnInit {
    * @param imageUrl Image URL
    */
   async clearImageCache(imageUrl: string = this.config.src) {
-    if (!this.platform.is('cordova')) {
+    if (!this.isMobile && this.isImageUrlRelative(imageUrl)) {
+      const fileName = this.createFileName(imageUrl);
+      await fs.removeFile(this.dirPath + '/' + fileName);
       return;
     }
 
