@@ -26,6 +26,18 @@ declare const Ionic: any;
 
 const EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.tiff', '.mp4', '.m4a', '.wav', '.wma', '.3gp'];
 
+const fixStyle = (div, node, i = 0) => {
+  if (!!div && node) {
+    div.style.top = `${node.offsetTop}px`;
+    div.style.left = `${node.offsetLeft}px`;
+    div.style.width = `${node.offsetWidth}px`;
+    div.style.height = `${node.offsetHeight}px`;
+  }
+  if (i < 10 && node.offsetWidth == 0) {
+    setTimeout(() => fixStyle(div, node, i), 350);
+  }
+};
+
 @Directive({
   // tslint:disable-next-line:directive-selector
   selector: '[customCache]',
@@ -80,6 +92,8 @@ export class IonMediaCacheDirective implements OnInit {
     this.config = new CustomCache(typeof config === 'object' ? config : {});
   }
 
+  @Input() className: string;
+
   /**
    * The URL of the image to load.
    */
@@ -130,14 +144,14 @@ export class IonMediaCacheDirective implements OnInit {
     }
     if (!this.spinnerDiv) {
       this.spinnerDiv = this.renderer.createElement('div');
-      this.spinnerDiv.className = 'spinner-div';
+      this.spinnerDiv.className = `${this.className ? this.className + '-' : ''}spinner-div`;
       this.spinnerDiv.innerHTML = this.config.spinner;
       this.renderer.setAttribute(this.spinnerDiv, 'style', this.config.spinnerStyle);
       this.tag.nativeElement.parentElement.appendChild(this.spinnerDiv);
-    } else {
-      if (this.spinnerDiv) {
-        this.spinnerDiv.style.display = 'flex';
-      }
+      fixStyle(this.spinnerDiv, this.tag.nativeElement);
+    }
+    if (this.config.spinner && !!this.spinnerDiv) {
+      this.spinnerDiv.style.display = 'flex';
     }
   }
 
@@ -147,7 +161,7 @@ export class IonMediaCacheDirective implements OnInit {
     }
     if (!this.fallbackDiv) {
       this.fallbackDiv = this.renderer.createElement('div');
-      this.fallbackDiv.className = 'fallback-div';
+      this.fallbackDiv.className = `${this.className ? this.className + '-' : ''}fallback-div`;
       this.fallbackDiv.innerHTML = this.config.fallbackReload;
       this.fallbackDiv.onclick = (event) => {
         this.fallbackDiv.style.display = 'none';
@@ -157,6 +171,7 @@ export class IonMediaCacheDirective implements OnInit {
       };
       this.renderer.setAttribute(this.fallbackDiv, 'style', this.config.fallbackStyle);
       this.tag.nativeElement.parentElement.appendChild(this.fallbackDiv);
+      fixStyle(this.fallbackDiv, this.tag.nativeElement);
     }
   }
 
@@ -299,9 +314,6 @@ export class IonMediaCacheDirective implements OnInit {
    */
   private setImage(imageUrl: string): void {
     this.ionImgDidLoad.emit(false);
-    if (this.config.spinner) {
-      this.spinnerDiv.style.display = 'flex';
-    }
     this.config.isFallback = false;
     const src = imageUrl || this.config.fallbackUrl;
     if (this.config.render !== 'src') {

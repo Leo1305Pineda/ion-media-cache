@@ -65,8 +65,8 @@ export class CustomCache {
         this.cache_expire = o.cache_expire;
         this.src = o.src;
         this.render = o.render || 'src';
-        const divStyle = `display: none;position: absolute;width: 100%;height: 100%;text-align: center;z-index: 999;justify-content: center;align-items: center;align-content: center;background: #dcdcdc4f;right: auto;top: 0px;left: 0;`;
-        const centerStyle = 'margin: 0;position: absolute;top: 50%;transform: translateX(-50%) translateY(-50%);';
+        const divStyle = `display: none;position: absolute;width: 100%;height: 100%;text-align: center;z-index: 999;justify-content: center;align-items: center;align-content: center;background: #dcdcdc4f;right: auto;top: 0px;left: 0px;`;
+        const centerStyle = 'margin: 0;position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%);';
         this.spinner = typeof o.spinner === 'boolean' && !o.spinner ? false : `<ion-spinner name="crescent" color="colorbase" style="${centerStyle}"></ion-spinner>`;
         this.spinnerStyle = o.styleSpinner || `${divStyle}`;
         this.fallbackReload = typeof o.fallbackReload === 'boolean' && !o.fallbackReload ? false : `<ion-icon name="cloud-offline" color="colorbase" style="${centerStyle}font-size: 2.7em;"></ion-icon>`;
