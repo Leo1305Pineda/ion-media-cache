@@ -26,18 +26,6 @@ declare const Ionic: any;
 
 const EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.tiff', '.mp4', '.m4a', '.wav', '.wma', '.3gp'];
 
-const fixStyle = (div, node, i = 0) => {
-  if (!!div && node) {
-    div.style.top = `${node.offsetTop}px`;
-    div.style.left = `${node.offsetLeft}px`;
-    div.style.width = `${node.offsetWidth}px`;
-    div.style.height = `${node.offsetHeight}px`;
-  }
-  if (i < 10 && node.offsetWidth == 0) {
-    setTimeout(() => fixStyle(div, node, i), 350);
-  }
-};
-
 @Directive({
   // tslint:disable-next-line:directive-selector
   selector: '[customCache]',
@@ -93,6 +81,7 @@ export class IonMediaCacheDirective implements OnInit {
   }
 
   @Input() className: string;
+  @Input() fixStyle: any;
 
   /**
    * The URL of the image to load.
@@ -148,7 +137,7 @@ export class IonMediaCacheDirective implements OnInit {
       this.spinnerDiv.innerHTML = this.config.spinner;
       this.renderer.setAttribute(this.spinnerDiv, 'style', this.config.spinnerStyle);
       this.tag.nativeElement.parentElement.appendChild(this.spinnerDiv);
-      fixStyle(this.spinnerDiv, this.tag.nativeElement);
+      this._fixStyle(this.spinnerDiv);
     }
     if (this.config.spinner && !!this.spinnerDiv) {
       this.spinnerDiv.style.display = 'flex';
@@ -171,7 +160,15 @@ export class IonMediaCacheDirective implements OnInit {
       };
       this.renderer.setAttribute(this.fallbackDiv, 'style', this.config.fallbackStyle);
       this.tag.nativeElement.parentElement.appendChild(this.fallbackDiv);
-      fixStyle(this.fallbackDiv, this.tag.nativeElement);
+      this._fixStyle(this.fallbackDiv);
+    }
+  }
+
+  _fixStyle(div, style = this.fixStyle) {
+    if (!!div && typeof style === 'object') {
+      _.keys(style).forEach((key) => {
+        div.style[key] = style[key];
+      });
     }
   }
 
