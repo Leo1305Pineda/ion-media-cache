@@ -15,9 +15,22 @@ With this directive you can download file to the device using [Fetch API](https:
 
 `npm i ion-media-cache@latest`.
 
-## require installation ionic native
+### Require installation ionic native
 
 [File](https://ionicframework.com/docs/native/file)
+
+```bash
+npm install cordova-plugin-file
+npm install @ionic-native/file
+ionic cap sync
+```
+[Ionic Webview](https://ionicframework.com/docs/native/ionic-webview)
+
+```bash
+npm install cordova-plugin-ionic-webview
+npm install @ionic-native/ionic-webview
+ionic cap sync
+```
 
 ## Quickstart
 
@@ -26,12 +39,18 @@ Import ion-media-cache in you module page.
 ```typescript
 // Import the module
 import { IonMediaCacheModule } from 'ion-media-cache';
+import { File } from '@ionic-native/file/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 ...
 @NgModule({
     (...)
     imports: [
         IonMediaCacheModule
     ],
+    providers: [
+        File,
+        WebView
+    ]
     (...)
 })
 export class PageModule {}
@@ -51,7 +70,8 @@ export class PageModule {}
 <div
     [url]="image"
     [customCache]="{fallbackUrl: '/assets/img/default.png', render: 'background', spinner: false, fallbackReload: false}"
-    style="background-repeat: no-repeat;background-position: center;background-size: cover;width: 100%;height: 100%;"></div>
+    style="background-repeat: no-repeat;background-position: center;background-size: cover;width: 100%;height: 100%;">
+</div>
 ```
 
 ### audio
@@ -70,8 +90,8 @@ export class PageModule {}
     [customCache]="{ fallbackUrl: '/assets/img/bienvenida.png', cache_expire: {time: n.component?.expire_subimage, data: data } }"
     (onExpireCache)="onExpireCache($event, elRef)"
     (ionImgDidLoad)="ionImgDidLoad($event)"
-    (ionError)="ionError($event)"
-></ion-img>
+    (ionError)="ionError($event)">
+</ion-img>
 ```
 
 ```typescript
@@ -93,25 +113,26 @@ ionError(event) {
 customCache = {
     debugMode: false,                       // boolean default = false;
     enabled: true,                          // booleandefault = true;
-    corsFromHeroku: false                    // fix https://stackoverflow.com/a/21136980/7638125
+    corsFromHeroku: false,                  // fix https://stackoverflow.com/a/21136980/7638125
     fallbackUrl: '',                        // string usage uri fail 'assetes/img/default.png'.
     concurrency: 5,                         // number default = 5, only on android, ios.
     maxCacheSize: -1,                       // number default -1, without limit.
     maxCacheAge: -1,                        // number default -1, without limit.
-    httpHeaders: ,                          // any default = {}.
+    httpHeaders: {},                        // any default = {}.
     fileNameCachedWithExtension: true,      // boolean default = true, save file with extension.
     fallbackFileNameCachedExtension: '.jpg',// string default '.jpg', extension to save.
     cacheDirectoryType: 'external',         // 'cache' | 'data' | 'external' default = 'external'.
     imageReturnType: 'uri',                 // 'base64' | 'uri' default = 'uri'.
     cacheDirectoryName: 'ion-media-cache',  // string default = 'ion-media-cache'.
     cache_expire: undefined,                // any default undefined, usage { time: new Date().getTime() + (1000 * [unit_second]) }.
-    cache = true,                           // boolean defaul = true, activeted cache.
+    cache: true,                           // boolean defaul = true, activeted cache.
     render: 'src',                          // string default, render to property src.
     spinner: `
     <ion-spinner name="crescent">
     </ion-spinner>`,                        // any usage innertHtml. or false to disabled spinner
     fallbackReload: `
-    <ion-icon name="cloud-offline" style="font-size: 2.7em;"></ion-icon>
+    <ion-icon name="cloud-offline">
+    </ion-icon>
     `,                                      // any;usage innertHtml. or false to disable fallbackReload
 
 }

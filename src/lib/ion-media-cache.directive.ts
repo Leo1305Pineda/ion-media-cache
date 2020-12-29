@@ -129,6 +129,9 @@ export class IonMediaCacheDirective implements OnInit {
 
   renderSpinner() {
     if (typeof this.config.spinner === 'boolean' && !this.config.spinner) {
+      if (this.spinnerDiv) {
+        this.spinnerDiv.remove();
+      } 
       return;
     }
     if (!this.spinnerDiv) {
@@ -146,6 +149,9 @@ export class IonMediaCacheDirective implements OnInit {
 
   renderFallbackDiv() {
     if (typeof this.config.fallbackReload === 'boolean' && !this.config.fallbackReload) {
+      if (this.fallbackDiv) {
+        this.fallbackDiv.remove();
+      }
       return;
     }
     if (!this.fallbackDiv) {
