@@ -69,7 +69,7 @@ export class PageModule {}
 ```html
 <div
     [url]="image"
-    [customCache]="{fallbackUrl: '/assets/img/default.png', render: 'background', spinner: false, fallbackReload: false}"
+    [customCache]="{fallbackUrl: '/assets/img/default.png', render: 'background-image', spinner: false, fallbackReload: false}"
     style="background-repeat: no-repeat;background-position: center;background-size: cover;width: 100%;height: 100%;">
 </div>
 ```

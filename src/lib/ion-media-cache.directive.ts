@@ -131,7 +131,7 @@ export class IonMediaCacheDirective implements OnInit {
     if (typeof this.config.spinner === 'boolean' && !this.config.spinner) {
       if (this.spinnerDiv) {
         this.spinnerDiv.remove();
-      } 
+      }
       return;
     }
     if (!this.spinnerDiv) {
@@ -320,15 +320,31 @@ export class IonMediaCacheDirective implements OnInit {
     this.config.isFallback = false;
     const src = imageUrl || this.config.fallbackUrl;
     if (this.config.render !== 'src') {
-      this.renderer.setStyle(this.tag.nativeElement, this.config.render, `url(${src})`);
+      if (this.config.render === 'background') {
+        var bgImg = new Image();
+        bgImg.onload = () => {
+          this.renderer.setStyle(this.tag.nativeElement, this.config.render, `url(${bgImg.src})`);
+          this.renderer.setStyle(this.tag.nativeElement, 'background-repeat', ` no-repeat`);
+          this.renderer.setStyle(this.tag.nativeElement, 'background-position', `center`);
+          this.renderer.setStyle(this.tag.nativeElement, 'background-size', `cover`);
+          this.stopSpinner();
+        };
+        bgImg.onerror = () => {
+          this.setImageFallback();
+        };
+        bgImg.src = src;
+      } else {
+        this.renderer.setStyle(this.tag.nativeElement, this.config.render, `url(${src})`);
+        this.stopSpinner();
+      }
     } else if (this.tag.nativeElement[this.config.render] != src) {
       this.tag.nativeElement[this.config.render] = src;
-    }
-    if (this.tag.nativeElement.nodeName === 'ION-IMG') {
-      this.tag.nativeElement.addEventListener('ionImgWillLoad', () => this.stopSpinner());
-    } else {
-      this.tag.nativeElement.onload = () => this.stopSpinner();
-      this.tag.nativeElement.onerror = () => this.setImageFallback();
+      if (this.tag.nativeElement.nodeName === 'ION-IMG') {
+        this.tag.nativeElement.addEventListener('ionImgWillLoad', () => this.stopSpinner());
+      } else {
+        this.tag.nativeElement.onload = () => this.stopSpinner();
+        this.tag.nativeElement.onerror = () => this.setImageFallback();
+      }
     }
   }
 
