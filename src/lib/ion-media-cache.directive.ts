@@ -76,9 +76,7 @@ export class IonMediaCacheDirective implements OnInit {
   /**
    * Use <img> tag
    */
-  @Input() set customCache(config) {
-    this.config = new CustomCache(typeof config === 'object' ? config : {});
-  }
+  @Input() customCache: any;
 
   @Input() className: string;
   @Input() fixStyle: any;
@@ -87,9 +85,13 @@ export class IonMediaCacheDirective implements OnInit {
    * The URL of the image to load.
    */
   @Input() set url(imageUrl: string) {
-    this.src = imageUrl;
-    this.config.src = this.processImageUrl(this.src);
-    this.updateImage(this.config.src);
+    this.config = new CustomCache(typeof this.customCache === 'object' ? this.customCache : {});
+    setTimeout(() => {
+      this.config = new CustomCache(typeof this.customCache === 'object' ? this.customCache : {});
+      this.src = imageUrl;
+      this.config.src = this.processImageUrl(this.src);
+      this.updateImage(this.config.src);
+    }, 10);
   }
 
   // tslint:disable-next-line:no-output-on-prefix
@@ -143,7 +145,7 @@ export class IonMediaCacheDirective implements OnInit {
       this._fixStyle(this.spinnerDiv);
     }
     if (this.config.spinner && !!this.spinnerDiv) {
-      this.spinnerDiv.style.display = 'flex';
+      this.spinnerDiv.style.display = !!this.config.src ? 'flex' : 'none';
     }
   }
 
