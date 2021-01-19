@@ -13,7 +13,7 @@ export class CurrentBlob {
 export class CustomCache {
     debugMode: boolean;
     enabled: boolean;
-    corsFromHeroku: boolean;
+    corsFromHeroku: string;
     fallbackUrl: string;
     isFallback: boolean;
     concurrency: number;
@@ -43,7 +43,7 @@ export class CustomCache {
         /** enable cache */
         this.enabled = o.enabled || true;
         /** concat http://cors-anywhere.herokuapp.com/ to currentUrl */
-        this.corsFromHeroku = !!o.corsFromHeroku;
+        this.corsFromHeroku = o.corsFromHeroku;
         /** Url if fail */
         this.fallbackUrl = o.fallbackUrl;
         /** Number of concurrent requests allowed */

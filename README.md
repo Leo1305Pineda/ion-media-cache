@@ -113,7 +113,7 @@ ionError(event) {
 customCache = {
     debugMode: false,                       // boolean default = false;
     enabled: true,                          // booleandefault = true;
-    corsFromHeroku: false,                  // fix https://stackoverflow.com/a/21136980/7638125
+    corsFromHeroku: '',                     // string = '' | 'http://cors-anywhere.herokuapp.com/'; fix https://stackoverflow.com/a/21136980/7638125
     fallbackUrl: '',                        // string usage uri fail 'assetes/img/default.png'.
     concurrency: 5,                         // number default = 5, only on android, ios.
     maxCacheSize: -1,                       // number default -1, without limit.
@@ -144,6 +144,8 @@ customCache = {
 // Print current cache loader in the DOM
 // Use console inspect in the browser
 IonMediaCache
+// print queue process
+(window as any).currentlyProcessing
 ```
 
 ## Testing fetch 

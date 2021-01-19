@@ -28,10 +28,7 @@ const EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.tiff', '.mp4', '.
 
 @Directive({
   // tslint:disable-next-line:directive-selector
-  selector: '[customCache]',
-  host: {
-    '(ionError)': 'setImageFallback()'
-  }
+  selector: '[customCache]'
 })
 export class IonMediaCacheDirective implements OnInit {
 
@@ -62,7 +59,7 @@ export class IonMediaCacheDirective implements OnInit {
   /**
    * Fast accessible Object for currently processing items
    */
-  private currentlyProcessing: { [index: string]: Promise<any> } = {};
+  // private currentlyProcessing: { [index: string]: Promise<any> } = {};
   private cacheIndex: IndexItem[] = [];
   private currentCacheSize = 0;
   private indexed = false;
@@ -85,6 +82,9 @@ export class IonMediaCacheDirective implements OnInit {
    * The URL of the image to load.
    */
   @Input() set url(imageUrl: string) {
+    if (!(window as any).currentlyProcessing) {
+      (window as any).currentlyProcessing = {};
+    }
     this.config = new CustomCache(typeof this.customCache === 'object' ? this.customCache : {});
     setTimeout(() => {
       this.config = new CustomCache(typeof this.customCache === 'object' ? this.customCache : {});
@@ -343,6 +343,7 @@ export class IonMediaCacheDirective implements OnInit {
       this.tag.nativeElement[this.config.render] = src;
       if (this.tag.nativeElement.nodeName === 'ION-IMG') {
         this.tag.nativeElement.addEventListener('ionImgWillLoad', () => this.stopSpinner());
+        this.tag.nativeElement.addEventListener('ionError', () => this.setImageFallback());
       } else {
         this.tag.nativeElement.onload = () => this.stopSpinner();
         this.tag.nativeElement.onerror = () => this.setImageFallback();
@@ -436,8 +437,8 @@ export class IonMediaCacheDirective implements OnInit {
       this.processQueue();
 
       // only delete if it's the last/unique occurrence in the queue
-      if (this.currentlyProcessing[currentItem.imageUrl] !== undefined && !this.currentlyInQueue(currentItem.imageUrl)) {
-        delete this.currentlyProcessing[currentItem.imageUrl];
+      if ((window as any).currentlyProcessing[currentItem.imageUrl] !== undefined && !this.currentlyInQueue(currentItem.imageUrl)) {
+        delete (window as any).currentlyProcessing[currentItem.imageUrl];
       }
     };
 
@@ -447,10 +448,10 @@ export class IonMediaCacheDirective implements OnInit {
       done();
     };
 
-    if (this.currentlyProcessing[currentItem.imageUrl] !== undefined) {
+    if ((window as any).currentlyProcessing[currentItem.imageUrl] !== undefined) {
       try {
         // Prevented same Image from loading at the same time
-        await this.currentlyProcessing[currentItem.imageUrl];
+        await (window as any).currentlyProcessing[currentItem.imageUrl];
         const localUrl = await this.getCachedImagePath(currentItem.imageUrl);
         currentItem.resolve(localUrl);
         done();
@@ -460,7 +461,7 @@ export class IonMediaCacheDirective implements OnInit {
       return;
     }
 
-    this.currentlyProcessing[currentItem.imageUrl] = (async () => {
+    (window as any).currentlyProcessing[currentItem.imageUrl] = (async () => {
       // process more items concurrently if we can
       if (this.canProcess) {
         this.processQueue();
@@ -469,7 +470,8 @@ export class IonMediaCacheDirective implements OnInit {
       const localDir = this.dirPath + '/';
       const fileName = this.createFileName(currentItem.imageUrl);
       // error cors https://stackoverflow.com/a/21136980/7638125
-      await fetch(`${this.config.corsFromHeroku ? 'http://cors-anywhere.herokuapp.com/' : ''}${currentItem.imageUrl}`, this.config.httpHeaders).then((response: any) => {
+      // https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js
+      await fetch(`${this.config.corsFromHeroku ? this.config.corsFromHeroku : ''}${currentItem.imageUrl}`, this.config.httpHeaders).then((response: any) => {
         return response.blob();
       }).then(async (blob: Blob) => {
         if (this.isMobile) {
