@@ -109,12 +109,8 @@ export class IonMediaCacheDirective implements OnInit {
     private platform: Platform,
     private webview: WebView) {
     this.tag = el;
-    if (!this.isJavaScript) {
-      this.script = document.createElement('script');
-      this.script.id = 'ion-media-cache';
-      this.script.type = 'text/javascript';
-      this.script.text = 'IonMediaCache = {};';
-      document.head.appendChild(this.script);
+    if (!window['IonMediaCache']) {
+      window['IonMediaCache'] = {};
     }
     if (this.isMobile) {
       fromEvent(document, 'deviceready').pipe(first()).subscribe(res => {
@@ -472,6 +468,9 @@ export class IonMediaCacheDirective implements OnInit {
       // error cors https://stackoverflow.com/a/21136980/7638125
       // https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js
       await fetch(`${this.config.corsFromHeroku ? this.config.corsFromHeroku : ''}${currentItem.imageUrl}`, this.config.httpHeaders).then((response: any) => {
+        if (response.status === 403) {
+          throw(response);
+        }       
         return response.blob();
       }).then(async (blob: Blob) => {
         if (this.isMobile) {
@@ -487,10 +486,14 @@ export class IonMediaCacheDirective implements OnInit {
         const localUrl = await this.getCachedImagePath(currentItem.imageUrl);
         currentItem.resolve(localUrl);
         done();
-      }).catch(() => {
+      }).catch((err) => {
         this.setImage(currentItem.imageUrl);
         done();
-        console.warn('https://ionicframework.com/docs/troubleshooting/cors');
+        if (err && err.status === 403) {
+          console.warn(err, 'AccessDenied', this.config.debugMode);
+        } else {
+          console.warn('https://ionicframework.com/docs/troubleshooting/cors');
+        }
       });
       this.maintainCacheSize();
 
