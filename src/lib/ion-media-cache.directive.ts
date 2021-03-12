@@ -32,8 +32,6 @@ const EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.tiff', '.mp4', '.
 })
 export class IonMediaCacheDirective implements OnInit {
 
-  private script: any;
-  private isJavaScript: boolean;
   config: CustomCache = new CustomCache();
   private src: string;
   /**
@@ -77,6 +75,8 @@ export class IonMediaCacheDirective implements OnInit {
 
   @Input() className: string;
   @Input() fixStyle: any;
+  @Input() fallbackStyle: string;
+  @Input() spinnerStyle: string;
 
   /**
    * The URL of the image to load.
@@ -103,12 +103,12 @@ export class IonMediaCacheDirective implements OnInit {
   @Output() ionError: EventEmitter<any> = new EventEmitter<any>(false);
 
   constructor(
-    el: ElementRef,
+    private el: ElementRef,
     private file: File,
     private renderer: Renderer2,
     private platform: Platform,
     private webview: WebView) {
-    this.tag = el;
+    this.tag = this.el;
     if (!window['IonMediaCache']) {
       window['IonMediaCache'] = {};
     }
@@ -136,7 +136,7 @@ export class IonMediaCacheDirective implements OnInit {
       this.spinnerDiv = this.renderer.createElement('div');
       this.spinnerDiv.className = `${this.className ? this.className + '-' : ''}spinner-div`;
       this.spinnerDiv.innerHTML = this.config.spinner;
-      this.renderer.setAttribute(this.spinnerDiv, 'style', this.config.spinnerStyle);
+      this.renderer.setAttribute(this.spinnerDiv, 'style', this.spinnerStyle || this.config.spinnerStyle);
       this.tag.nativeElement.parentElement.appendChild(this.spinnerDiv);
       this._fixStyle(this.spinnerDiv);
     }
@@ -162,7 +162,7 @@ export class IonMediaCacheDirective implements OnInit {
         event.stopImmediatePropagation();
         event.stopPropagation();
       };
-      this.renderer.setAttribute(this.fallbackDiv, 'style', this.config.fallbackStyle);
+      this.renderer.setAttribute(this.fallbackDiv, 'style', this.fallbackStyle || this.config.fallbackStyle);
       this.tag.nativeElement.parentElement.appendChild(this.fallbackDiv);
       this._fixStyle(this.fallbackDiv);
     }

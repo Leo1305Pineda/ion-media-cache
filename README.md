@@ -107,7 +107,7 @@ ionError(event) {
 }
 ```
 
-## Optional custom cache
+## Optional properties
 
 ```typescript
 customCache = {
@@ -136,6 +136,8 @@ customCache = {
     `,                                      // any;usage innertHtml. or false to disable fallbackReload
 
 }
+spinnerStyle // string [spinnerStyle]="'width: 100%;height: 100%'"
+fallbackStyle // string [fallbackStyle]="'width: 100%;height: 100%'"
 ```
 
 ## IonMediaCache
