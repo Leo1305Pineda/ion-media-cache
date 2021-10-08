@@ -732,15 +732,16 @@ export class IonMediaCacheDirective implements OnInit {
 
   /**
    * Normalizes the image uri to a version that can be loaded in the webview
+   * @see https://stackoverflow.com/a/52141086/7638125
+   * @see https://beta.ionicframework.com/docs/native/ionic-webview/
    * @param fileEntry the FileEntry of the image file
    * @returns {string} the normalized Url
    */
-
   private normalizeUrl(fileEntry: FileEntry): string {
     // Use Ionic normalizeUrl to generate the right URL for Ionic WKWebView
-    if (Ionic && typeof Ionic.normalizeURL == 'function') {
+    /*if (Ionic && typeof Ionic.normalizeURL == 'function') {
       return Ionic.normalizeURL(fileEntry.nativeURL);
-    }
+    }*/
     // use new webview function to do the trick
     if (this.webview) {
       return this.webview.convertFileSrc(fileEntry.nativeURL);
