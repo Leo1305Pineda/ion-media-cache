@@ -150,6 +150,20 @@ IonMediaCache
 (window as any).currentlyProcessing
 ```
 
+## Maintain fs-web
+
+```javascript
+import * as fs from 'fs-web';
+declare const window;
+window.fsWeb = fs;
+// Remove all files
+window.fsWeb.readdir('ion-media-cache').then((files) => {
+    files.forEach((file) => {
+        window.fsWeb.removeFile(file.path);
+    });
+});
+```
+
 ## Testing fetch 
 
 ```js

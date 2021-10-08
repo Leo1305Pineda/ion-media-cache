@@ -480,7 +480,7 @@ export class IonMediaCacheDirective implements OnInit {
           }
           await this.addFileToIndex(file);
         } else {
-          await fs.writeFile(this.dirPath + '/' + fileName, blob);
+          await fs.writeFile(this.getPath(fileName), blob);
           await this.addFileToIndex({ name: fileName });
         }
         const localUrl = await this.getCachedImagePath(currentItem.imageUrl);
@@ -530,7 +530,7 @@ export class IonMediaCacheDirective implements OnInit {
 
   getMetadata(fileName): Promise<any> {
     return new Promise((resolve, reject) => {
-      fs.readString(this.dirPath + '/' + fileName).then((_blob: Blob) => {
+      fs.readString(this.getPath(fileName)).then((_blob: Blob) => {
         const metadata = { size: !!_blob && _blob instanceof Blob ? _blob.size : 0, modificationTime: (new Date()).getTime() };
         resolve(metadata);
         return metadata;
@@ -640,6 +640,10 @@ export class IonMediaCacheDirective implements OnInit {
     return this.getFileCacheDirectory() + this.config.cacheDirectoryName;
   }
 
+  getPath(fileName) {
+    return this.dirPath + '/' + fileName;
+  }
+
   /**
    * Get the local path of a previously cached image if exists
    * @param url The remote URL of the image
@@ -659,7 +663,7 @@ export class IonMediaCacheDirective implements OnInit {
 
       if (this.isMobile) {
         // check if exists
-        const fileEntry = await this.file.resolveLocalFilesystemUrl(this.dirPath + '/' + fileName) as FileEntry;
+        const fileEntry = await this.file.resolveLocalFilesystemUrl(this.getPath(fileName)) as FileEntry;
 
         // file exists in cache
         if (this.config.imageReturnType == 'base64') {
@@ -705,13 +709,13 @@ export class IonMediaCacheDirective implements OnInit {
         if (!currentBlob) {
           currentBlob = new CurrentBlob();
         }
-        return await fs.readString(this.dirPath + '/' + fileName).then(async (blob: Blob) => {
+        return await fs.readString(this.getPath(fileName)).then(async (blob: Blob) => {
           if (!!blob) {
             if (blob.type === 'text/html' || blob.type === 'application/octet-stream') {
-              await fs.removeFile(this.dirPath + '/' + fileName);
+              await fs.removeFile(this.getPath(fileName));
             } else {
               if (currentBlob.url != url) {
-                (window as any).IonMediaCache[url] = new CurrentBlob({ url, blob, objectUrl: window.URL.createObjectURL(blob), path: this.dirPath + '/' + fileName });
+                (window as any).IonMediaCache[url] = new CurrentBlob({ url, blob, objectUrl: window.URL.createObjectURL(blob), path: this.getPath(fileName) });
                 currentBlob = (window as any).IonMediaCache[url];
               }
               return currentBlob.objectUrl;
@@ -883,7 +887,7 @@ export class IonMediaCacheDirective implements OnInit {
   async clearImageCache(imageUrl: string = this.config.src) {
     if (!this.isMobile && this.isImageUrlRelative(imageUrl)) {
       const fileName = this.createFileName(imageUrl);
-      await fs.removeFile(this.dirPath + '/' + fileName);
+      await fs.removeFile(this.getPath(fileName));
       return;
     }
 
