@@ -163,6 +163,11 @@ window.fsWeb.readdir('ion-media-cache').then((files) => {
     });
 });
 ```
+## To customize the response valid of the blob type
+
+```html
+<div [typeBlob]="['text/html', 'application/octet-stream']"></div>
+```
 
 ## Testing fetch 
 

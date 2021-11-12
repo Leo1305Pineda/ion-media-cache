@@ -94,6 +94,8 @@ export class IonMediaCacheDirective implements OnInit {
     }, 10);
   }
 
+  @Input() typeBlob: any [] = ['text/html', 'application/octet-stream'];
+
   // tslint:disable-next-line:no-output-on-prefix
   @Output() onExpireCache: EventEmitter<any> = new EventEmitter<any>();
 
@@ -711,7 +713,8 @@ export class IonMediaCacheDirective implements OnInit {
         }
         return await fs.readString(this.getPath(fileName)).then(async (blob: Blob) => {
           if (!!blob) {
-            if (blob.type === 'text/html' || blob.type === 'application/octet-stream') {
+            if (this.typeBlob.indexOf(blob.type) > -1) {
+              console.warn(`This blob is type ${blob.type} is not valid, use property [typeBlob]="['text/html', 'application/octet-stream']" to customize type.`);
               await fs.removeFile(this.getPath(fileName));
             } else {
               if (currentBlob.url != url) {
